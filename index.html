@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Advanced Budgeting Pro | ₦ Naira</title>
-  <!-- Tailwind + Font Awesome + Chart.js + jsPDF + autoTable -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -22,13 +21,12 @@
 <body class="antialiased">
 
 <div class="max-w-7xl mx-auto px-4 py-6 md:py-8">
-  <!-- HEADER -->
   <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
     <div>
       <h1 class="text-3xl font-extrabold bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
         <i class="fas fa-chart-line text-indigo-600 mr-2"></i>BudgetMaster Pro ₦
       </h1>
-      <p class="text-gray-500 text-sm">Advanced budgeting · Savings as expense · Color-coded charts · Local storage</p>
+      <p class="text-gray-500 text-sm">Advanced budgeting · Savings as expense · Goals tracking · Local storage</p>
     </div>
     <div class="flex gap-3 flex-wrap">
       <button id="refreshDashboardBtn" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-xl shadow-sm hover:bg-gray-50 transition"><i class="fas fa-sync-alt mr-1"></i> Refresh</button>
@@ -36,7 +34,6 @@
     </div>
   </div>
 
-  <!-- DASHBOARD CARDS -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
     <div class="bg-white rounded-2xl shadow-sm p-5 border-l-8 border-l-green-500 card-hover">
       <div class="flex justify-between"><span class="text-gray-500 text-sm">Total Income</span><i class="fas fa-arrow-up text-green-500 text-xl"></i></div>
@@ -56,16 +53,15 @@
     </div>
   </div>
 
-  <!-- TABS -->
   <div class="flex flex-wrap gap-2 border-b border-gray-200 mb-6">
     <button class="tab-btn active-tab px-5 py-2 rounded-t-lg font-semibold text-indigo-700 border-b-2 border-indigo-600" data-tab="dashboardTab"><i class="fas fa-tachometer-alt mr-1"></i> Dashboard</button>
     <button class="tab-btn px-5 py-2 rounded-t-lg font-semibold text-gray-600 hover:text-indigo-600" data-tab="transactionsTab"><i class="fas fa-list-ul mr-1"></i> Transactions</button>
+    <button class="tab-btn px-5 py-2 rounded-t-lg font-semibold text-gray-600 hover:text-indigo-600" data-tab="goalsTab"><i class="fas fa-bullseye mr-1"></i> Goals</button>
     <button class="tab-btn px-5 py-2 rounded-t-lg font-semibold text-gray-600 hover:text-indigo-600" data-tab="budgetsTab"><i class="fas fa-chart-pie mr-1"></i> Budget Allocation</button>
     <button class="tab-btn px-5 py-2 rounded-t-lg font-semibold text-gray-600 hover:text-indigo-600" data-tab="invoicesTab"><i class="fas fa-file-invoice-dollar mr-1"></i> Invoice Tracking</button>
     <button class="tab-btn px-5 py-2 rounded-t-lg font-semibold text-gray-600 hover:text-indigo-600" data-tab="reportsTab"><i class="fas fa-chart-bar mr-1"></i> Financial Reports</button>
   </div>
 
-  <!-- DASHBOARD PANEL -->
   <div id="dashboardTab" class="tab-content">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2 bg-white p-5 rounded-2xl shadow-sm">
@@ -93,7 +89,6 @@
     </div>
   </div>
 
-  <!-- TRANSACTIONS PANEL -->
   <div id="transactionsTab" class="tab-content hidden">
     <div class="bg-white rounded-2xl shadow-sm p-5">
       <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
@@ -109,7 +104,20 @@
     </div>
   </div>
 
-  <!-- BUDGET ALLOCATION -->
+  <div id="goalsTab" class="tab-content hidden">
+    <div class="bg-white rounded-2xl shadow-sm p-5">
+      <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
+        <div>
+          <h3 class="text-xl font-bold"><i class="fas fa-bullseye text-indigo-500"></i> Financial Goals</h3>
+          <p class="text-sm text-gray-500">Adding funds to a goal automatically deducts from your balance as a "Savings" expense.</p>
+        </div>
+        <button id="addNewGoalBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-xl"><i class="fas fa-plus"></i> Create Goal</button>
+      </div>
+      <div id="goalsListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        </div>
+    </div>
+  </div>
+
   <div id="budgetsTab" class="tab-content hidden">
     <div class="bg-white rounded-2xl shadow-sm p-5">
       <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
@@ -122,7 +130,6 @@
     </div>
   </div>
 
-  <!-- INVOICE TRACKING -->
   <div id="invoicesTab" class="tab-content hidden">
     <div class="bg-white rounded-2xl shadow-sm p-5">
       <h3 class="text-xl font-bold mb-3"><i class="fas fa-receipt"></i> Invoice Tracking (Expenses only)</h3>
@@ -130,7 +137,6 @@
     </div>
   </div>
 
-  <!-- REPORTS PANEL -->
   <div id="reportsTab" class="tab-content hidden">
     <div class="bg-white rounded-2xl shadow-sm p-5">
       <h3 class="text-xl font-bold mb-3"><i class="fas fa-download"></i> Generate Financial Report (PDF) - ₦ Naira</h3>
@@ -143,7 +149,6 @@
   </div>
 </div>
 
-<!-- MODAL FOR ADD/EDIT TRANSACTION -->
 <div id="transactionModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden transition-all">
   <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
     <h3 class="text-xl font-bold mb-3" id="modalTitle">Add Transaction</h3>
@@ -157,6 +162,36 @@
       <div class="border-t pt-2"><label class="block text-sm font-semibold">Invoice details (optional)</label><input type="text" id="txInvoiceNum" placeholder="Invoice Number" class="w-full border p-1 rounded mb-1"><input type="date" id="txInvoiceDue" placeholder="Due Date" class="w-full border p-1 rounded"><div class="flex items-center mt-1"><input type="checkbox" id="txInvoicePaid"> <label class="ml-2 text-sm">Paid</label></div></div>
     </div>
     <div class="flex justify-end gap-2 mt-5"><button id="closeModalBtn" class="px-4 py-2 border rounded">Cancel</button><button id="saveTxBtn" class="px-5 py-2 bg-indigo-600 text-white rounded">Save</button></div>
+  </div>
+</div>
+
+<div id="createGoalModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden transition-all">
+  <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
+    <h3 class="text-xl font-bold mb-3">Create New Goal</h3>
+    <div class="space-y-3">
+      <input type="text" id="goalNameInput" placeholder="Goal Name (e.g., Buy a Car)" class="w-full border p-2 rounded" required>
+      <input type="number" id="goalTargetInput" placeholder="Target Amount (₦)" class="w-full border p-2 rounded" required>
+    </div>
+    <div class="flex justify-end gap-2 mt-5">
+      <button id="closeGoalModalBtn" class="px-4 py-2 border rounded">Cancel</button>
+      <button id="saveGoalBtn" class="px-5 py-2 bg-indigo-600 text-white rounded">Save Goal</button>
+    </div>
+  </div>
+</div>
+
+<div id="fundGoalModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden transition-all">
+  <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
+    <h3 class="text-xl font-bold mb-3">Add Funds to Goal</h3>
+    <p class="text-sm text-gray-600 mb-3" id="fundGoalDesc"></p>
+    <input type="hidden" id="fundGoalId">
+    <div class="space-y-3">
+      <input type="number" id="fundGoalAmount" placeholder="Amount to add (₦)" class="w-full border p-2 rounded" required>
+      <input type="date" id="fundGoalDate" class="w-full border p-2 rounded" required>
+    </div>
+    <div class="flex justify-end gap-2 mt-5">
+      <button id="closeFundModalBtn" class="px-4 py-2 border rounded">Cancel</button>
+      <button id="saveFundBtn" class="px-5 py-2 bg-green-600 text-white rounded">Add Funds</button>
+    </div>
   </div>
 </div>
 
@@ -176,20 +211,25 @@
   
   const incomeCategories = ["Salary", "Freelance", "Investment", "Gift", "Refund", "Other Income"];
   
-  const STORAGE_KEYS = { transactions: "budget_transactions", budgets: "budget_category_budgets" };
+  // Added "budget_goals" to storage keys
+  const STORAGE_KEYS = { transactions: "budget_transactions", budgets: "budget_category_budgets", goals: "budget_goals" };
   let transactions = [];
   let monthlyBudgets = [];
+  let goals = [];
   let expenseChart, trendChart;
   
   // Helper functions
   function loadData() {
     const storedTx = localStorage.getItem(STORAGE_KEYS.transactions);
-    transactions = storedTx ? JSON.parse(storedTx) : []; // empty initially
+    transactions = storedTx ? JSON.parse(storedTx) : []; 
     const storedBudgets = localStorage.getItem(STORAGE_KEYS.budgets);
     monthlyBudgets = storedBudgets ? JSON.parse(storedBudgets) : [];
+    const storedGoals = localStorage.getItem(STORAGE_KEYS.goals);
+    goals = storedGoals ? JSON.parse(storedGoals) : [];
   }
   function saveTransactions() { localStorage.setItem(STORAGE_KEYS.transactions, JSON.stringify(transactions)); }
   function saveBudgets() { localStorage.setItem(STORAGE_KEYS.budgets, JSON.stringify(monthlyBudgets)); }
+  function saveGoals() { localStorage.setItem(STORAGE_KEYS.goals, JSON.stringify(goals)); }
   function getCurrentMonth() { return new Date().toISOString().slice(0,7); }
   
   // Refresh entire UI
@@ -200,6 +240,7 @@
     renderAllTransactions();
     renderBudgetsUI();
     renderInvoices();
+    renderGoals();
     updateBudgetVsActual();
   }
   
@@ -322,6 +363,98 @@
     document.getElementById("transactionModal").classList.add("hidden");
     refreshAll();
   }
+
+  // ================= GOALS LOGIC =================
+  function renderGoals() {
+    const container = document.getElementById("goalsListContainer");
+    if(goals.length === 0) {
+      container.innerHTML = '<div class="col-span-full p-6 text-center border-2 border-dashed rounded-xl text-gray-400">No goals currently set. Click "Create Goal" to get started!</div>';
+      return;
+    }
+    
+    container.innerHTML = goals.map(g => {
+      let percent = Math.min((g.savedAmount / g.targetAmount) * 100, 100);
+      let isComplete = percent >= 100;
+      return `
+        <div class="border rounded-2xl p-5 shadow-sm relative bg-gray-50 hover:bg-white transition">
+          <button onclick="deleteGoal('${g.id}')" class="absolute top-4 right-4 text-red-400 hover:text-red-600"><i class="fas fa-trash"></i></button>
+          <h4 class="font-bold text-lg text-gray-800">${g.name}</h4>
+          <p class="text-sm text-gray-500 mb-3">Saved: ₦${g.savedAmount.toFixed(2)} / Target: ₦${g.targetAmount.toFixed(2)}</p>
+          <div class="w-full bg-gray-200 rounded-full h-3 mb-3 overflow-hidden">
+            <div class="${isComplete ? 'bg-green-500' : 'bg-indigo-600'} h-3 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+          </div>
+          <div class="flex justify-between items-center mt-4">
+            <span class="text-sm font-semibold ${isComplete ? 'text-green-600' : 'text-indigo-600'}">${percent.toFixed(1)}% ${isComplete ? 'Reached!' : ''}</span>
+            <button onclick="openFundModal('${g.id}')" class="bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-lg text-sm hover:bg-indigo-200 transition font-medium"><i class="fas fa-plus"></i> Add Funds</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.deleteGoal = (id) => {
+    if(confirm("Are you sure you want to delete this goal? (This will NOT delete the expense transactions already tracked for it).")) {
+      goals = goals.filter(g => g.id != id);
+      saveGoals();
+      refreshAll();
+    }
+  }
+
+  window.openFundModal = (id) => {
+    let goal = goals.find(g => g.id == id);
+    if(goal) {
+      document.getElementById("fundGoalId").value = goal.id;
+      document.getElementById("fundGoalDesc").innerText = `Funding Goal: ${goal.name}`;
+      document.getElementById("fundGoalAmount").value = "";
+      document.getElementById("fundGoalDate").value = new Date().toISOString().slice(0, 10);
+      document.getElementById("fundGoalModal").classList.remove("hidden");
+    }
+  }
+
+  document.getElementById("saveGoalBtn").onclick = () => {
+    let name = document.getElementById("goalNameInput").value;
+    let target = parseFloat(document.getElementById("goalTargetInput").value);
+    if(!name || !target) { alert("Please provide a name and target amount."); return; }
+    
+    goals.push({ id: Date.now(), name: name, targetAmount: target, savedAmount: 0 });
+    saveGoals();
+    document.getElementById("createGoalModal").classList.add("hidden");
+    refreshAll();
+  }
+
+  document.getElementById("saveFundBtn").onclick = () => {
+    let id = document.getElementById("fundGoalId").value;
+    let amount = parseFloat(document.getElementById("fundGoalAmount").value);
+    let date = document.getElementById("fundGoalDate").value;
+
+    if(!amount || !date) { alert("Please provide an amount and date."); return; }
+
+    let goalIndex = goals.findIndex(g => g.id == id);
+    if(goalIndex !== -1) {
+      // 1. Update the goal progress
+      goals[goalIndex].savedAmount += amount;
+      saveGoals();
+
+      // 2. Automatically deduct from total by creating an EXPENSE transaction under "Savings"
+      let newExpenseTx = { 
+        id: Date.now() + 1, // Offset ID slightly
+        type: "expense", 
+        amount: amount, 
+        category: "Savings", 
+        date: date, 
+        description: `Funded Goal: ${goals[goalIndex].name}`, 
+        invoiceNumber: "", 
+        invoiceDueDate: "", 
+        invoicePaid: false 
+      };
+      transactions.push(newExpenseTx);
+      saveTransactions();
+
+      document.getElementById("fundGoalModal").classList.add("hidden");
+      refreshAll();
+    }
+  }
+  // ===============================================
   
   function renderBudgetsUI() {
     let month = document.getElementById("budgetMonth").value || getCurrentMonth();
@@ -421,11 +554,32 @@
     populateCategorySelect();
     refreshAll();
     
-    document.querySelectorAll(".tab-btn").forEach(btn=>{ btn.addEventListener("click",()=>{ let tabId=btn.getAttribute("data-tab"); document.querySelectorAll(".tab-content").forEach(t=>t.classList.add("hidden")); document.getElementById(tabId).classList.remove("hidden"); document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active-tab","border-b-2","border-indigo-600","text-indigo-700")); btn.classList.add("active-tab","border-b-2","border-indigo-600","text-indigo-700"); }); });
+    // Tab switching logic
+    document.querySelectorAll(".tab-btn").forEach(btn=>{ 
+      btn.addEventListener("click",()=>{ 
+        let tabId=btn.getAttribute("data-tab"); 
+        document.querySelectorAll(".tab-content").forEach(t=>t.classList.add("hidden")); 
+        document.getElementById(tabId).classList.remove("hidden"); 
+        document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active-tab","border-b-2","border-indigo-600","text-indigo-700")); 
+        btn.classList.add("active-tab","border-b-2","border-indigo-600","text-indigo-700"); 
+      }); 
+    });
     
+    // Original Modals
     document.getElementById("addTransactionBtn").onclick = ()=>{ document.getElementById("editTxId").value=""; document.getElementById("modalTitle").innerText="Add Transaction"; document.getElementById("transactionModal").classList.remove("hidden"); };
     document.getElementById("addTransactionQuickBtn").onclick = ()=>{ document.getElementById("editTxId").value=""; document.getElementById("modalTitle").innerText="Add Transaction"; document.getElementById("transactionModal").classList.remove("hidden"); };
     document.getElementById("closeModalBtn").onclick = ()=>document.getElementById("transactionModal").classList.add("hidden");
+    
+    // Goals Modals
+    document.getElementById("addNewGoalBtn").onclick = () => {
+      document.getElementById("goalNameInput").value = "";
+      document.getElementById("goalTargetInput").value = "";
+      document.getElementById("createGoalModal").classList.remove("hidden");
+    };
+    document.getElementById("closeGoalModalBtn").onclick = () => document.getElementById("createGoalModal").classList.add("hidden");
+    document.getElementById("closeFundModalBtn").onclick = () => document.getElementById("fundGoalModal").classList.add("hidden");
+
+    // Saves
     document.getElementById("saveTxBtn").onclick = saveTransactionFromModal;
     document.getElementById("saveBudgetsBtn").onclick = saveBudgetsHandler;
     document.getElementById("budgetMonth").addEventListener("change", ()=>{ renderBudgetsUI(); updateBudgetVsActual(); });
