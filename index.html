@@ -29,6 +29,10 @@
       <p class="text-gray-500 text-sm">Advanced budgeting · Savings as expense · Goals tracking · Local storage</p>
     </div>
     <div class="flex gap-3 flex-wrap">
+      <button id="exportDataBtn" class="bg-gray-800 text-white px-4 py-2 rounded-xl shadow-md hover:bg-gray-900 transition"><i class="fas fa-download mr-1"></i> Backup</button>
+      <label for="importDataInput" class="bg-gray-200 border border-gray-300 text-gray-800 px-4 py-2 rounded-xl shadow-sm hover:bg-gray-300 transition cursor-pointer"><i class="fas fa-upload mr-1"></i> Restore</label>
+      <input type="file" id="importDataInput" class="hidden" accept=".json">
+
       <button id="refreshDashboardBtn" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-xl shadow-sm hover:bg-gray-50 transition"><i class="fas fa-sync-alt mr-1"></i> Refresh</button>
       <button id="exportPDFBtn" class="bg-indigo-600 text-white px-5 py-2 rounded-xl shadow-md hover:bg-indigo-700 transition"><i class="fas fa-file-pdf mr-2"></i> Export Report (₦)</button>
     </div>
@@ -211,7 +215,6 @@
   
   const incomeCategories = ["Salary", "Freelance", "Investment", "Gift", "Refund", "Other Income"];
   
-  // Added "budget_goals" to storage keys
   const STORAGE_KEYS = { transactions: "budget_transactions", budgets: "budget_category_budgets", goals: "budget_goals" };
   let transactions = [];
   let monthlyBudgets = [];
@@ -227,6 +230,8 @@
     const storedGoals = localStorage.getItem(STORAGE_KEYS.goals);
     goals = storedGoals ? JSON.parse(storedGoals) : [];
   }
+  
+  // These correctly save data permanently to the browser's localStorage
   function saveTransactions() { localStorage.setItem(STORAGE_KEYS.transactions, JSON.stringify(transactions)); }
   function saveBudgets() { localStorage.setItem(STORAGE_KEYS.budgets, JSON.stringify(monthlyBudgets)); }
   function saveGoals() { localStorage.setItem(STORAGE_KEYS.goals, JSON.stringify(goals)); }
@@ -437,7 +442,7 @@
 
       // 2. Automatically deduct from total by creating an EXPENSE transaction under "Savings"
       let newExpenseTx = { 
-        id: Date.now() + 1, // Offset ID slightly
+        id: Date.now() + 1, 
         type: "expense", 
         amount: amount, 
         category: "Savings", 
@@ -548,12 +553,74 @@
     [...incomeCategories, ...expenseCategories].forEach(c=>{ let opt = document.createElement("option"); opt.value=c; opt.innerText=c; sel.appendChild(opt); });
   }
   
+  // ================= NEW: BACKUP AND RESTORE LOGIC =================
+  
+  // Export Data (Backup)
+  function exportData() {
+    const allData = {
+      transactions: transactions,
+      budgets: monthlyBudgets,
+      goals: goals
+    };
+    
+    // Convert object to JSON string and encode it
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allData));
+    
+    // Create an invisible download link and trigger it
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "budget_backup_life.json");
+    document.body.appendChild(downloadAnchorNode); 
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  }
+
+  // Import Data (Restore)
+  function importData(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        
+        // Restore each piece of data if it exists in the file
+        if (importedData.transactions) {
+          transactions = importedData.transactions;
+          saveTransactions();
+        }
+        if (importedData.budgets) {
+          monthlyBudgets = importedData.budgets;
+          saveBudgets();
+        }
+        if (importedData.goals) {
+          goals = importedData.goals;
+          saveGoals();
+        }
+        
+        alert("Data restored successfully!");
+        refreshAll(); // Update the UI with the new data
+      } catch (error) {
+        alert("Error importing data. Please ensure it is a valid backup JSON file.");
+      }
+    };
+    
+    // Read the selected file
+    if (event.target.files[0]) {
+      fileReader.readAsText(event.target.files[0]);
+    }
+  }
+
+  // =================================================================
+
   // Event Listeners
   document.addEventListener("DOMContentLoaded", ()=>{
     loadData();
     populateCategorySelect();
     refreshAll();
     
+    // Connect Backup and Restore buttons
+    document.getElementById("exportDataBtn").onclick = exportData;
+    document.getElementById("importDataInput").addEventListener("change", importData);
+
     // Tab switching logic
     document.querySelectorAll(".tab-btn").forEach(btn=>{ 
       btn.addEventListener("click",()=>{ 
