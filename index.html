@@ -2,350 +2,412 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Advanced Budgeting Pro | ₦ Naira</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.6.0/jspdf.plugin.autotable.min.js"></script>
   <style>
-    body { background: #f0f2f5; font-family: 'Inter', system-ui, sans-serif; }
-    .card-hover { transition: all 0.2s ease; }
-    .card-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -10px rgba(0,0,0,0.1); }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+    /* ================= CUSTOM CSS (No Frameworks) ================= */
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --success: #10b981;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --warning: #f59e0b;
+      --bg: #f0f2f5;
+      --card-bg: #ffffff;
+      --text-dark: #1f2937;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body { font-family: system-ui, -apple-system, sans-serif; background-color: var(--bg); color: var(--text-dark); line-height: 1.5; padding: 20px; }
+    
+    .container { max-width: 1200px; margin: 0 auto; }
+    
+    .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 30px; }
+    .header h1 { color: var(--primary); font-size: 24px; }
+    .header p { color: var(--text-muted); font-size: 14px; }
+    
+    .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    button, .file-label { cursor: pointer; padding: 8px 16px; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: 0.2s; text-align: center; display: inline-block; }
+    
+    .btn-outline { background: #fff; border: 1px solid var(--border); color: var(--text-dark); }
+    .btn-outline:hover { background: #f9fafb; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-info { background: var(--info); color: #fff; }
+    .file-input { display: none; }
+
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .card { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .card-title { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 14px; margin-bottom: 10px; }
+    .card-value { font-size: 24px; font-weight: bold; }
+    
+    .border-l-success { border-left: 6px solid var(--success); }
+    .border-l-danger { border-left: 6px solid var(--danger); }
+    .border-l-info { border-left: 6px solid var(--info); }
+    .border-l-primary { border-left: 6px solid var(--primary); }
+
+    .tabs { display: flex; gap: 5px; border-bottom: 1px solid var(--border); margin-bottom: 20px; flex-wrap: wrap; }
+    .tab-btn { background: transparent; color: var(--text-muted); border-radius: 8px 8px 0 0; padding: 10px 20px; margin-bottom: -1px; }
+    .tab-btn.active { background: var(--card-bg); color: var(--primary); border: 1px solid var(--border); border-bottom: 1px solid var(--card-bg); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
+    th { background: #f9fafb; color: var(--text-muted); }
+    
+    .badge { padding: 4px 8px; border-radius: 999px; font-size: 12px; font-weight: bold; }
+    .badge-income { background: #d1fae5; color: #065f46; }
+    .badge-expense { background: #fee2e2; color: #991b1b; }
+
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: bold; }
+    .form-control { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; }
+
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+    .modal-overlay.active { display: flex; }
+    .modal-content { background: #fff; padding: 25px; border-radius: 12px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; }
+
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    
+    /* Native Print Styling */
+    @media print {
+      body * { visibility: hidden; }
+      #printReportArea, #printReportArea * { visibility: visible; }
+      #printReportArea { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
+    }
   </style>
 </head>
-<body class="antialiased">
+<body>
 
-<div class="max-w-7xl mx-auto px-4 py-6 md:py-8">
-  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div class="container">
+  <div class="header">
     <div>
-      <h1 class="text-3xl font-extrabold bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
-        <i class="fas fa-chart-line text-indigo-600 mr-2"></i>BudgetMaster Pro ₦
-      </h1>
-      <p class="text-gray-500 text-sm">Advanced budgeting · Savings as expense · Goals tracking · Local storage</p>
+      <h1>📊 BudgetMaster Pro ₦</h1>
+      <p>100% Offline · Local Storage · Zero Dependencies</p>
     </div>
-    <div class="flex gap-3 flex-wrap">
-      <button id="exportDataBtn" class="bg-gray-800 text-white px-4 py-2 rounded-xl shadow-md hover:bg-gray-900 transition"><i class="fas fa-download mr-1"></i> Backup</button>
-      <label for="importDataInput" class="bg-gray-200 border border-gray-300 text-gray-800 px-4 py-2 rounded-xl shadow-sm hover:bg-gray-300 transition cursor-pointer"><i class="fas fa-upload mr-1"></i> Restore</label>
-      <input type="file" id="importDataInput" class="hidden" accept=".json">
-
-      <button id="refreshDashboardBtn" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-xl shadow-sm hover:bg-gray-50 transition"><i class="fas fa-sync-alt mr-1"></i> Refresh</button>
-      <button id="exportPDFBtn" class="bg-indigo-600 text-white px-5 py-2 rounded-xl shadow-md hover:bg-indigo-700 transition"><i class="fas fa-file-pdf mr-2"></i> Export Report (₦)</button>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-    <div class="bg-white rounded-2xl shadow-sm p-5 border-l-8 border-l-green-500 card-hover">
-      <div class="flex justify-between"><span class="text-gray-500 text-sm">Total Income</span><i class="fas fa-arrow-up text-green-500 text-xl"></i></div>
-      <p class="text-2xl font-bold mt-2" id="totalIncomeDisplay">₦0</p>
-    </div>
-    <div class="bg-white rounded-2xl shadow-sm p-5 border-l-8 border-l-red-500 card-hover">
-      <div class="flex justify-between"><span class="text-gray-500 text-sm">Total Expenses</span><i class="fas fa-arrow-down text-red-500 text-xl"></i></div>
-      <p class="text-2xl font-bold mt-2" id="totalExpenseDisplay">₦0</p>
-    </div>
-    <div class="bg-white rounded-2xl shadow-sm p-5 border-l-8 border-l-blue-500 card-hover">
-      <div class="flex justify-between"><span class="text-gray-500 text-sm">Net Balance</span><i class="fas fa-wallet text-blue-500 text-xl"></i></div>
-      <p class="text-2xl font-bold mt-2" id="balanceDisplay">₦0</p>
-    </div>
-    <div class="bg-white rounded-2xl shadow-sm p-5 border-l-8 border-l-purple-500 card-hover">
-      <div class="flex justify-between"><span class="text-gray-500 text-sm">Cash Flow (30d forecast)</span><i class="fas fa-chart-line text-purple-500 text-xl"></i></div>
-      <p class="text-2xl font-bold mt-2" id="forecastDisplay">₦0</p>
+    <div class="btn-group">
+      <button class="btn-outline" onclick="refreshAll()">🔄 Refresh</button>
+      <button class="btn-primary" onclick="switchTab('reportsTab')">📄 Report</button>
+      <button class="btn-success" onclick="exportBackupData()" title="Save data permanently to your device">💾 Backup Data</button>
+      <label class="btn-info file-label" title="Load previously saved data">
+        📂 Restore Data
+        <input type="file" id="restoreDataInput" class="file-input" accept=".json">
+      </label>
     </div>
   </div>
 
-  <div class="flex flex-wrap gap-2 border-b border-gray-200 mb-6">
-    <button class="tab-btn active-tab px-5 py-2 rounded-t-lg font-semibold text-indigo-700 border-b-2 border-indigo-600" data-tab="dashboardTab"><i class="fas fa-tachometer-alt mr-1"></i> Dashboard</button>
-    <button class="tab-btn px-5 py-2 rounded-t-lg font-semibold text-gray-600 hover:text-indigo-600" data-tab="transactionsTab"><i class="fas fa-list-ul mr-1"></i> Transactions</button>
-    <button class="tab-btn px-5 py-2 rounded-t-lg font-semibold text-gray-600 hover:text-indigo-600" data-tab="goalsTab"><i class="fas fa-bullseye mr-1"></i> Goals</button>
-    <button class="tab-btn px-5 py-2 rounded-t-lg font-semibold text-gray-600 hover:text-indigo-600" data-tab="budgetsTab"><i class="fas fa-chart-pie mr-1"></i> Budget Allocation</button>
-    <button class="tab-btn px-5 py-2 rounded-t-lg font-semibold text-gray-600 hover:text-indigo-600" data-tab="invoicesTab"><i class="fas fa-file-invoice-dollar mr-1"></i> Invoice Tracking</button>
-    <button class="tab-btn px-5 py-2 rounded-t-lg font-semibold text-gray-600 hover:text-indigo-600" data-tab="reportsTab"><i class="fas fa-chart-bar mr-1"></i> Financial Reports</button>
+  <div class="grid-4">
+    <div class="card border-l-success">
+      <div class="card-title"><span>Total Income</span><span>📈</span></div>
+      <div class="card-value" id="totalIncomeDisplay">₦0</div>
+    </div>
+    <div class="card border-l-danger">
+      <div class="card-title"><span>Total Expenses</span><span>📉</span></div>
+      <div class="card-value" id="totalExpenseDisplay">₦0</div>
+    </div>
+    <div class="card border-l-info">
+      <div class="card-title"><span>Net Balance</span><span>💳</span></div>
+      <div class="card-value" id="balanceDisplay">₦0</div>
+    </div>
+    <div class="card border-l-primary">
+      <div class="card-title"><span>30d Forecast</span><span>🔮</span></div>
+      <div class="card-value" id="forecastDisplay">₦0</div>
+    </div>
   </div>
 
-  <div id="dashboardTab" class="tab-content">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div class="lg:col-span-2 bg-white p-5 rounded-2xl shadow-sm">
-        <h3 class="font-bold text-gray-800 mb-3"><i class="fas fa-chart-pie text-indigo-500 mr-2"></i>Expenses by Category (Current Month)</h3>
-        <canvas id="expenseChart" height="200"></canvas>
-        <p class="text-center text-gray-400 text-sm mt-2" id="chartEmptyMsg">Add expenses to see chart</p>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('dashboardTab')">🏠 Dashboard</button>
+    <button class="tab-btn" onclick="switchTab('transactionsTab')">📝 Transactions</button>
+    <button class="tab-btn" onclick="switchTab('goalsTab')">🎯 Goals</button>
+    <button class="tab-btn" onclick="switchTab('budgetsTab')">💰 Budgets</button>
+    <button class="tab-btn" onclick="switchTab('reportsTab')">📈 Reports</button>
+  </div>
+
+  <div id="dashboardTab" class="tab-content active">
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="flex-between">
+        <h3>Recent Transactions</h3>
+        <button class="btn-outline" onclick="openTxModal()">+ Add New</button>
       </div>
-      <div class="bg-white p-5 rounded-2xl shadow-sm">
-        <h3 class="font-bold text-gray-800 mb-3"><i class="fas fa-chart-line text-green-600 mr-2"></i>Monthly Trend (Last 6 months)</h3>
-        <canvas id="trendChart" height="200"></canvas>
-        <p class="text-center text-gray-400 text-sm mt-2">No data yet</p>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead><tr><th>Date</th><th>Category</th><th>Description</th><th style="text-align: right;">Amount (₦)</th><th>Type</th></tr></thead>
+          <tbody id="recentTxList"></tbody>
+        </table>
       </div>
     </div>
-    <div class="mt-6 bg-white p-5 rounded-2xl shadow-sm">
-      <div class="flex justify-between items-center flex-wrap mb-3">
-        <h3 class="font-bold text-gray-800"><i class="fas fa-history mr-2"></i>Recent Transactions</h3>
-        <button id="addTransactionQuickBtn" class="text-sm bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg"><i class="fas fa-plus"></i> Add new</button>
+
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+      <div class="card" style="flex: 1; min-width: 300px; display: flex; flex-direction: column; align-items: center;">
+        <h3>Expenses by Category (Current Month)</h3>
+        <canvas id="nativePieChart" width="250" height="250" style="margin-top: 15px;"></canvas>
       </div>
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm" id="recentTxTable">
-          <thead class="bg-gray-50"><tr><th class="p-2 text-left">Date</th><th class="p-2 text-left">Category</th><th class="p-2 text-left">Description</th><th class="p-2 text-right">Amount (₦)</th><th class="p-2 text-center">Type</th></tr></thead>
-          <tbody id="recentTxList"><tr><td colspan="5" class="text-center p-4 text-gray-400">No transactions yet. Click "Add new" to start.</td></tr></tbody>
+    </div>
+  </div>
+
+  <div id="transactionsTab" class="tab-content">
+    <div class="card">
+      <div class="flex-between">
+        <h3>All Transactions</h3>
+        <button class="btn-primary" onclick="openTxModal()">+ New Transaction</button>
+      </div>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Description</th><th>Amount (₦)</th><th>Actions</th></tr></thead>
+          <tbody id="allTxList"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <div id="transactionsTab" class="tab-content hidden">
-    <div class="bg-white rounded-2xl shadow-sm p-5">
-      <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
-        <h3 class="text-xl font-bold"><i class="fas fa-exchange-alt text-indigo-500"></i> Transaction Logging</h3>
-        <button id="addTransactionBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-xl"><i class="fas fa-plus-circle"></i> New Transaction</button>
+  <div id="goalsTab" class="tab-content">
+    <div class="card">
+      <div class="flex-between">
+        <h3>Financial Goals</h3>
+        <button class="btn-primary" onclick="openGoalModal()">+ Create Goal</button>
       </div>
-      <div class="overflow-x-auto">
-        <table class="min-w-full border-collapse" id="allTxTable">
-          <thead class="bg-gray-100"><tr><th class="p-2 text-left">Date</th><th>Type</th><th>Category</th><th>Description</th><th>Amount (₦)</th><th>Invoice#</th><th class="text-center">Actions</th></tr></thead>
-          <tbody id="allTxList"><tr><td colspan="7" class="text-center p-4 text-gray-400">No transactions. Click "New Transaction" to add income or expense.</td></tr></tbody>
-        </table>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Funding a goal automatically adds an expense under "Savings".</p>
+      <div id="goalsListContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;"></div>
+    </div>
+  </div>
+
+  <div id="budgetsTab" class="tab-content">
+    <div class="card">
+      <div class="flex-between" style="margin-bottom: 15px;">
+        <h3>Monthly Budgets</h3>
+        <input type="month" id="budgetMonth" class="form-control" style="width: auto;">
+      </div>
+      <div id="budgetListContainer"></div>
+      <br>
+      <button class="btn-success" onclick="saveBudgetsHandler()">💾 Save Budgets</button>
+      
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border);">
+        <h3>Budget vs Actual Spending</h3>
+        <div id="budgetVsActual" style="margin-top: 15px;"></div>
       </div>
     </div>
   </div>
 
-  <div id="goalsTab" class="tab-content hidden">
-    <div class="bg-white rounded-2xl shadow-sm p-5">
-      <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
-        <div>
-          <h3 class="text-xl font-bold"><i class="fas fa-bullseye text-indigo-500"></i> Financial Goals</h3>
-          <p class="text-sm text-gray-500">Adding funds to a goal automatically deducts from your balance as a "Savings" expense.</p>
+  <div id="reportsTab" class="tab-content">
+    <div class="card">
+      <h3>Generate Printable Report</h3>
+      <div style="display: flex; gap: 10px; margin-top: 15px; align-items: flex-end;">
+        <div class="form-group" style="margin: 0;">
+          <label>Report Period:</label>
+          <select id="reportPeriod" class="form-control">
+            <option value="weekly">Last 7 Days</option>
+            <option value="monthly" selected>Current Month</option>
+            <option value="yearly">Current Year</option>
+          </select>
         </div>
-        <button id="addNewGoalBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-xl"><i class="fas fa-plus"></i> Create Goal</button>
+        <button class="btn-primary" onclick="generateNativeReport()">🖨️ Print / Save PDF</button>
       </div>
-      <div id="goalsListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        </div>
     </div>
+    
+    <div id="printReportArea" style="display: none; background: white;"></div>
   </div>
 
-  <div id="budgetsTab" class="tab-content hidden">
-    <div class="bg-white rounded-2xl shadow-sm p-5">
-      <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
-        <h3 class="text-xl font-bold"><i class="fas fa-wallet"></i> Monthly Budget per Category (₦)</h3>
-        <div><label class="text-sm">Month: <input type="month" id="budgetMonth" class="border rounded p-1"></label></div>
-      </div>
-      <div id="budgetListContainer" class="space-y-3"></div>
-      <div class="mt-4 text-right"><button id="saveBudgetsBtn" class="bg-green-600 text-white px-5 py-2 rounded-lg"><i class="fas fa-save"></i> Save Budgets</button></div>
-      <div class="mt-6 p-3 bg-indigo-50 rounded-lg"><p class="text-sm"><i class="fas fa-info-circle"></i> Budget vs actual spending for selected month</p><div id="budgetVsActual"></div></div>
-    </div>
-  </div>
-
-  <div id="invoicesTab" class="tab-content hidden">
-    <div class="bg-white rounded-2xl shadow-sm p-5">
-      <h3 class="text-xl font-bold mb-3"><i class="fas fa-receipt"></i> Invoice Tracking (Expenses only)</h3>
-      <div class="overflow-x-auto"><table class="min-w-full" id="invoiceTable"><thead class="bg-gray-100"><tr><th>Invoice #</th><th>Due Date</th><th>Category</th><th>Amount (₦)</th><th>Status</th><th>Action</th></tr></thead><tbody id="invoiceListBody"><tr><td colspan="6" class="text-center p-4 text-gray-400">No invoices linked. Add an expense with invoice number.</td></tr></tbody></table></div>
-    </div>
-  </div>
-
-  <div id="reportsTab" class="tab-content hidden">
-    <div class="bg-white rounded-2xl shadow-sm p-5">
-      <h3 class="text-xl font-bold mb-3"><i class="fas fa-download"></i> Generate Financial Report (PDF) - ₦ Naira</h3>
-      <div class="flex flex-wrap gap-4 items-end mb-6">
-        <div><label class="block text-sm">Report Period:</label><select id="reportPeriod" class="border rounded p-2"><option value="weekly">Weekly (Last 7 days)</option><option value="monthly" selected>Monthly (Current Month)</option><option value="yearly">Yearly (Current Year)</option></select></div>
-        <button id="generateReportBtn" class="bg-red-600 text-white px-6 py-2 rounded-xl"><i class="fas fa-file-pdf"></i> Download PDF Report</button>
-      </div>
-      <div id="reportPreview" class="border-t pt-4"><p class="text-gray-500">Select a period and click download. Report includes income, expenses, savings category breakdown, and transaction list.</p></div>
-    </div>
-  </div>
 </div>
 
-<div id="transactionModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden transition-all">
-  <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
-    <h3 class="text-xl font-bold mb-3" id="modalTitle">Add Transaction</h3>
+<div id="transactionModal" class="modal-overlay">
+  <div class="modal-content">
+    <h3 id="modalTitle" style="margin-bottom: 15px;">Add Transaction</h3>
     <input type="hidden" id="editTxId">
-    <div class="space-y-3">
-      <select id="txType" class="w-full border p-2 rounded"><option value="income">Income</option><option value="expense">Expense</option></select>
-      <input type="number" id="txAmount" placeholder="Amount (₦)" class="w-full border p-2 rounded" required>
-      <select id="txCategory" class="w-full border p-2 rounded"><option value="">Select Category</option></select>
-      <input type="date" id="txDate" class="w-full border p-2 rounded">
-      <input type="text" id="txDesc" placeholder="Description" class="w-full border p-2 rounded">
-      <div class="border-t pt-2"><label class="block text-sm font-semibold">Invoice details (optional)</label><input type="text" id="txInvoiceNum" placeholder="Invoice Number" class="w-full border p-1 rounded mb-1"><input type="date" id="txInvoiceDue" placeholder="Due Date" class="w-full border p-1 rounded"><div class="flex items-center mt-1"><input type="checkbox" id="txInvoicePaid"> <label class="ml-2 text-sm">Paid</label></div></div>
-    </div>
-    <div class="flex justify-end gap-2 mt-5"><button id="closeModalBtn" class="px-4 py-2 border rounded">Cancel</button><button id="saveTxBtn" class="px-5 py-2 bg-indigo-600 text-white rounded">Save</button></div>
-  </div>
-</div>
-
-<div id="createGoalModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden transition-all">
-  <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
-    <h3 class="text-xl font-bold mb-3">Create New Goal</h3>
-    <div class="space-y-3">
-      <input type="text" id="goalNameInput" placeholder="Goal Name (e.g., Buy a Car)" class="w-full border p-2 rounded" required>
-      <input type="number" id="goalTargetInput" placeholder="Target Amount (₦)" class="w-full border p-2 rounded" required>
-    </div>
-    <div class="flex justify-end gap-2 mt-5">
-      <button id="closeGoalModalBtn" class="px-4 py-2 border rounded">Cancel</button>
-      <button id="saveGoalBtn" class="px-5 py-2 bg-indigo-600 text-white rounded">Save Goal</button>
+    <div class="form-group"><select id="txType" class="form-control"><option value="income">Income</option><option value="expense">Expense</option></select></div>
+    <div class="form-group"><input type="number" id="txAmount" placeholder="Amount (₦)" class="form-control" required></div>
+    <div class="form-group"><select id="txCategory" class="form-control"></select></div>
+    <div class="form-group"><input type="date" id="txDate" class="form-control" required></div>
+    <div class="form-group"><input type="text" id="txDesc" placeholder="Description (Optional)" class="form-control"></div>
+    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+      <button class="btn-outline" onclick="closeModals()">Cancel</button>
+      <button class="btn-primary" onclick="saveTransactionFromModal()">Save</button>
     </div>
   </div>
 </div>
 
-<div id="fundGoalModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden transition-all">
-  <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
-    <h3 class="text-xl font-bold mb-3">Add Funds to Goal</h3>
-    <p class="text-sm text-gray-600 mb-3" id="fundGoalDesc"></p>
+<div id="goalModal" class="modal-overlay">
+  <div class="modal-content">
+    <h3 style="margin-bottom: 15px;">Create New Goal</h3>
+    <div class="form-group"><input type="text" id="goalNameInput" placeholder="Goal Name (e.g. Vacation)" class="form-control" required></div>
+    <div class="form-group"><input type="number" id="goalTargetInput" placeholder="Target Amount (₦)" class="form-control" required></div>
+    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+      <button class="btn-outline" onclick="closeModals()">Cancel</button>
+      <button class="btn-primary" onclick="saveGoal()">Save Goal</button>
+    </div>
+  </div>
+</div>
+
+<div id="fundModal" class="modal-overlay">
+  <div class="modal-content">
+    <h3 id="fundGoalDesc" style="margin-bottom: 15px;">Add Funds</h3>
     <input type="hidden" id="fundGoalId">
-    <div class="space-y-3">
-      <input type="number" id="fundGoalAmount" placeholder="Amount to add (₦)" class="w-full border p-2 rounded" required>
-      <input type="date" id="fundGoalDate" class="w-full border p-2 rounded" required>
-    </div>
-    <div class="flex justify-end gap-2 mt-5">
-      <button id="closeFundModalBtn" class="px-4 py-2 border rounded">Cancel</button>
-      <button id="saveFundBtn" class="px-5 py-2 bg-green-600 text-white rounded">Add Funds</button>
+    <div class="form-group"><input type="number" id="fundGoalAmount" placeholder="Amount to add (₦)" class="form-control" required></div>
+    <div class="form-group"><input type="date" id="fundGoalDate" class="form-control" required></div>
+    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+      <button class="btn-outline" onclick="closeModals()">Cancel</button>
+      <button class="btn-success" onclick="saveFund()">Add Funds</button>
     </div>
   </div>
 </div>
 
 <script>
-  // ======================== ADVANCED BUDGET SYSTEM ========================
-  // Expense categories INCLUDING "Savings"
-  const expenseCategories = [
-    "Food & Dining", "Transport", "Rent/Mortgage", "Utilities", 
-    "Entertainment", "Healthcare", "Shopping", "Insurance", 
-    "Education", "Savings", "Other Expense"
-  ];
-  // Distinct colors for each expense category (11 colors)
-  const categoryColors = [
-    "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", 
-    "#FF9F40", "#C9CBCF", "#7C4DFF", "#00E676", "#FF6E40", "#8D6E63"
-  ];
-  
+  // ================= DATA & CONFIGURATION =================
+  const expenseCategories = ["Food & Dining", "Transport", "Rent/Mortgage", "Utilities", "Entertainment", "Healthcare", "Shopping", "Education", "Savings", "Other Expense"];
   const incomeCategories = ["Salary", "Freelance", "Investment", "Gift", "Refund", "Other Income"];
+  const categoryColors = ["#ef4444", "#f97316", "#f59e0b", "#84cc16", "#10b981", "#06b6d4", "#3b82f6", "#8b5cf6", "#d946ef", "#64748b"];
   
-  const STORAGE_KEYS = { transactions: "budget_transactions", budgets: "budget_category_budgets", goals: "budget_goals" };
+  const STORAGE_KEYS = { transactions: "budget_tx_pure", budgets: "budget_budgets_pure", goals: "budget_goals_pure" };
   let transactions = [];
   let monthlyBudgets = [];
   let goals = [];
-  let expenseChart, trendChart;
-  
-  // Helper functions
+
+  // ================= CORE STORAGE =================
   function loadData() {
-    const storedTx = localStorage.getItem(STORAGE_KEYS.transactions);
-    transactions = storedTx ? JSON.parse(storedTx) : []; 
-    const storedBudgets = localStorage.getItem(STORAGE_KEYS.budgets);
-    monthlyBudgets = storedBudgets ? JSON.parse(storedBudgets) : [];
-    const storedGoals = localStorage.getItem(STORAGE_KEYS.goals);
-    goals = storedGoals ? JSON.parse(storedGoals) : [];
+    transactions = JSON.parse(localStorage.getItem(STORAGE_KEYS.transactions) || "[]");
+    monthlyBudgets = JSON.parse(localStorage.getItem(STORAGE_KEYS.budgets) || "[]");
+    goals = JSON.parse(localStorage.getItem(STORAGE_KEYS.goals) || "[]");
   }
-  
-  // These correctly save data permanently to the browser's localStorage
   function saveTransactions() { localStorage.setItem(STORAGE_KEYS.transactions, JSON.stringify(transactions)); }
   function saveBudgets() { localStorage.setItem(STORAGE_KEYS.budgets, JSON.stringify(monthlyBudgets)); }
   function saveGoals() { localStorage.setItem(STORAGE_KEYS.goals, JSON.stringify(goals)); }
-  function getCurrentMonth() { return new Date().toISOString().slice(0,7); }
-  
-  // Refresh entire UI
+
+  // ================= UI SWITCHING & INITIALIZATION =================
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  function initCategories() {
+    let sel = document.getElementById("txCategory");
+    sel.innerHTML = '<option value="" disabled selected>-- Select Category --</option>';
+    [...incomeCategories, ...expenseCategories].forEach(c => {
+      sel.innerHTML += `<option value="${c}">${c}</option>`;
+    });
+    document.getElementById("txDate").value = new Date().toISOString().slice(0,10);
+    document.getElementById("budgetMonth").value = new Date().toISOString().slice(0,7);
+  }
+
+  // ================= REFRESH ALL VIEWS =================
   function refreshAll() {
+    loadData();
     updateDashboardStats();
-    updateCharts();
-    renderRecentTransactions();
-    renderAllTransactions();
-    renderBudgetsUI();
-    renderInvoices();
+    renderTransactions();
     renderGoals();
-    updateBudgetVsActual();
+    renderBudgetsUI();
+    drawCustomPieChart();
   }
-  
+
   function updateDashboardStats() {
-    let totalIncome = transactions.filter(t=>t.type==="income").reduce((s,t)=>s+t.amount,0);
-    let totalExpense = transactions.filter(t=>t.type==="expense").reduce((s,t)=>s+t.amount,0);
-    let balance = totalIncome - totalExpense;
-    document.getElementById("totalIncomeDisplay").innerHTML = `₦${totalIncome.toFixed(2)}`;
-    document.getElementById("totalExpenseDisplay").innerHTML = `₦${totalExpense.toFixed(2)}`;
-    document.getElementById("balanceDisplay").innerHTML = balance>=0 ? `₦${balance.toFixed(2)}` : `-₦${Math.abs(balance).toFixed(2)}`;
+    let inc = transactions.filter(t=>t.type==="income").reduce((s,t)=>s+t.amount,0);
+    let exp = transactions.filter(t=>t.type==="expense").reduce((s,t)=>s+t.amount,0);
+    document.getElementById("totalIncomeDisplay").innerText = `₦${inc.toFixed(2)}`;
+    document.getElementById("totalExpenseDisplay").innerText = `₦${exp.toFixed(2)}`;
+    document.getElementById("balanceDisplay").innerText = `₦${(inc-exp).toFixed(2)}`;
     
-    // Cash flow forecast (30-day)
-    let last30days = [];
+    // 30 day simple forecast
     let today = new Date();
-    for(let i=0;i<30;i++) {
-      let day = new Date(today); day.setDate(today.getDate()-i);
-      let dayStr = day.toISOString().slice(0,10);
-      let dayIncome = transactions.filter(t=>t.type==="income" && t.date===dayStr).reduce((s,t)=>s+t.amount,0);
-      let dayExpense = transactions.filter(t=>t.type==="expense" && t.date===dayStr).reduce((s,t)=>s+t.amount,0);
-      last30days.push(dayIncome - dayExpense);
+    let netLast30 = 0;
+    for(let i=0;i<30;i++){
+      let d = new Date(today); d.setDate(today.getDate()-i);
+      let ds = d.toISOString().slice(0,10);
+      let dayInc = transactions.filter(t=>t.type==="income" && t.date===ds).reduce((s,t)=>s+t.amount,0);
+      let dayExp = transactions.filter(t=>t.type==="expense" && t.date===ds).reduce((s,t)=>s+t.amount,0);
+      netLast30 += (dayInc - dayExp);
     }
-    let avgNet = last30days.reduce((a,b)=>a+b,0)/30;
-    let forecast30 = avgNet * 30;
-    document.getElementById("forecastDisplay").innerHTML = forecast30>=0 ? `₦${forecast30.toFixed(0)}` : `-₦${Math.abs(forecast30).toFixed(0)}`;
+    document.getElementById("forecastDisplay").innerText = `₦${netLast30.toFixed(0)}`;
   }
-  
-  function updateCharts() {
-    const currentMonth = getCurrentMonth();
-    let expenseMap = new Map();
-    expenseCategories.forEach(c=>expenseMap.set(c,0));
-    transactions.filter(t=>t.type==="expense" && t.date.startsWith(currentMonth)).forEach(t=>{
-      if(expenseMap.has(t.category)) expenseMap.set(t.category, expenseMap.get(t.category) + t.amount);
-      else expenseMap.set(t.category, (expenseMap.get(t.category)||0) + t.amount);
-    });
-    let labels = expenseCategories;
-    let data = expenseCategories.map(c=>expenseMap.get(c) || 0);
-    let hasData = data.some(v=>v>0);
-    document.getElementById("chartEmptyMsg").innerHTML = hasData ? "" : "Add expenses to see chart";
+
+  function renderTransactions() {
+    let sorted = [...transactions].sort((a,b)=>new Date(b.date)-new Date(a.date));
     
-    if(expenseChart) expenseChart.destroy();
-    let ctx = document.getElementById('expenseChart').getContext('2d');
-    expenseChart = new Chart(ctx, { 
-      type: 'doughnut', 
-      data: { labels, datasets: [{ data, backgroundColor: categoryColors, borderWidth: 1 }] },
-      options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } }
-    });
-    
-    // Monthly trend (last 6 months)
-    let months = [];
-    let incomeTrend = [], expenseTrend=[];
-    for(let i=5;i>=0;i--) {
-      let d = new Date(); d.setMonth(d.getMonth()-i);
-      let mon = d.toISOString().slice(0,7);
-      months.push(mon);
-      let inc = transactions.filter(t=>t.type==="income" && t.date.startsWith(mon)).reduce((s,t)=>s+t.amount,0);
-      let exp = transactions.filter(t=>t.type==="expense" && t.date.startsWith(mon)).reduce((s,t)=>s+t.amount,0);
-      incomeTrend.push(inc); expenseTrend.push(exp);
-    }
-    if(trendChart) trendChart.destroy();
-    let ctx2 = document.getElementById('trendChart').getContext('2d');
-    trendChart = new Chart(ctx2, { type:'line', data:{ labels:months, datasets:[{ label:'Income (₦)', data:incomeTrend, borderColor:'#10b981', tension:0.2},{ label:'Expenses (₦)', data:expenseTrend, borderColor:'#ef4444', tension:0.2}] }, options: { responsive: true } });
+    // Recent Dashboard Table
+    let recentHtml = sorted.slice(0,5).map(t => `
+      <tr><td>${t.date}</td><td>${t.category}</td><td>${t.description||'-'}</td>
+      <td style="text-align: right; font-family: monospace;">₦${t.amount.toFixed(2)}</td>
+      <td><span class="badge ${t.type==='income'?'badge-income':'badge-expense'}">${t.type}</span></td></tr>
+    `).join('');
+    document.getElementById("recentTxList").innerHTML = recentHtml || `<tr><td colspan="5" style="text-align:center;">No transactions yet.</td></tr>`;
+
+    // All Transactions Table
+    let allHtml = sorted.map(t => `
+      <tr><td>${t.date}</td><td><span class="badge ${t.type==='income'?'badge-income':'badge-expense'}">${t.type}</span></td>
+      <td>${t.category}</td><td>${t.description||'-'}</td><td style="font-family: monospace;">₦${t.amount.toFixed(2)}</td>
+      <td>
+        <button style="background:transparent; color:var(--info);" onclick="editTransaction(${t.id})">✏️</button>
+        <button style="background:transparent; color:var(--danger);" onclick="deleteTransaction(${t.id})">🗑️</button>
+      </td></tr>
+    `).join('');
+    document.getElementById("allTxList").innerHTML = allHtml || `<tr><td colspan="6" style="text-align:center;">No transactions found.</td></tr>`;
   }
-  
-  function renderRecentTransactions() {
-    let sorted = [...transactions].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
-    if(sorted.length === 0) {
-      document.getElementById("recentTxList").innerHTML = '<tr><td colspan="5" class="text-center p-4 text-gray-400">No transactions yet. Click "Add new" to start.</td></tr>';
+
+  // ================= NATIVE CANVAS CHART (No Chart.js) =================
+  function drawCustomPieChart() {
+    const canvas = document.getElementById('nativePieChart');
+    if(!canvas || !canvas.getContext) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let currentMonth = new Date().toISOString().slice(0,7);
+    let expenses = transactions.filter(t => t.type === "expense" && t.date.startsWith(currentMonth));
+    
+    if(expenses.length === 0) {
+      ctx.font = "14px system-ui"; ctx.fillStyle = "#999"; ctx.textAlign = "center";
+      ctx.fillText("No expenses this month.", canvas.width/2, canvas.height/2);
       return;
     }
-    let html = sorted.map(t=>`<tr><td class="p-2">${t.date}</td><td class="p-2">${t.category}</td><td class="p-2">${t.description||'-'}</td><td class="text-right font-mono">₦${t.amount.toFixed(2)}</td><td class="text-center"><span class="px-2 py-0.5 rounded-full text-xs ${t.type==='income'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${t.type}</span></td></tr>`).join('');
-    document.getElementById("recentTxList").innerHTML = html;
-  }
-  
-  function renderAllTransactions() {
-    if(transactions.length === 0) {
-      document.getElementById("allTxList").innerHTML = '<tr><td colspan="7" class="text-center p-4 text-gray-400">No transactions. Click "New Transaction" to add income or expense.</td></tr>';
-      return;
+
+    let sums = {};
+    expenses.forEach(t => sums[t.category] = (sums[t.category] || 0) + t.amount);
+    
+    let labels = Object.keys(sums);
+    let data = Object.values(sums);
+    let total = data.reduce((a,b)=>a+b,0);
+    
+    let startAngle = -Math.PI / 2; // Start at top
+    let centerX = canvas.width / 2;
+    let centerY = canvas.height / 2;
+    let radius = Math.min(centerX, centerY) - 10;
+
+    for(let i=0; i<data.length; i++) {
+      let sliceAngle = (data[i] / total) * 2 * Math.PI;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+      ctx.closePath();
+      ctx.fillStyle = categoryColors[i % categoryColors.length];
+      ctx.fill();
+      startAngle += sliceAngle;
     }
-    let html = transactions.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(t=>`<tr class="border-b"><td class="p-2">${t.date}</td><td class="capitalize">${t.type}</td><td>${t.category}</td><td>${t.description||''}</td><td class="font-mono">₦${t.amount.toFixed(2)}</td><td>${t.invoiceNumber||'-'}</td><td class="text-center"><button onclick="editTransaction('${t.id}')" class="text-blue-600 mr-2"><i class="fas fa-edit"></i></button><button onclick="deleteTransaction('${t.id}')" class="text-red-600"><i class="fas fa-trash"></i></button></td></tr>`).join('');
-    document.getElementById("allTxList").innerHTML = html;
+
+    // Draw inner circle for "Doughnut" look
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius * 0.6, 0, 2 * Math.PI);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+    
+    // Add Total Text in middle
+    ctx.fillStyle = "#333";
+    ctx.font = "bold 16px system-ui";
+    ctx.textAlign = "center";
+    ctx.fillText("Total", centerX, centerY - 10);
+    ctx.font = "14px monospace";
+    ctx.fillText("₦"+total.toFixed(0), centerX, centerY + 10);
   }
-  
-  window.editTransaction = (id) => {
-    let tx = transactions.find(t=>t.id==id);
-    if(tx) {
-      document.getElementById("editTxId").value = tx.id;
-      document.getElementById("txType").value = tx.type;
-      document.getElementById("txAmount").value = tx.amount;
-      document.getElementById("txCategory").value = tx.category;
-      document.getElementById("txDate").value = tx.date;
-      document.getElementById("txDesc").value = tx.description||'';
-      document.getElementById("txInvoiceNum").value = tx.invoiceNumber||'';
-      document.getElementById("txInvoiceDue").value = tx.invoiceDueDate||'';
-      document.getElementById("txInvoicePaid").checked = tx.invoicePaid||false;
-      document.getElementById("modalTitle").innerText = "Edit Transaction";
-      document.getElementById("transactionModal").classList.remove("hidden");
-    }
-  };
-  window.deleteTransaction = (id) => { if(confirm("Delete this transaction?")) { transactions = transactions.filter(t=>t.id!=id); saveTransactions(); refreshAll(); } };
-  
+
+  // ================= MODALS & CRUD =================
+  function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
+  function openTxModal() { document.getElementById("editTxId").value = ""; document.getElementById("transactionModal").classList.add("active"); }
+  function openGoalModal() { document.getElementById("goalModal").classList.add("active"); }
+
   function saveTransactionFromModal() {
     let id = document.getElementById("editTxId").value;
     let type = document.getElementById("txType").value;
@@ -353,307 +415,200 @@
     let category = document.getElementById("txCategory").value;
     let date = document.getElementById("txDate").value;
     let desc = document.getElementById("txDesc").value;
-    let invoiceNum = document.getElementById("txInvoiceNum").value;
-    let invoiceDue = document.getElementById("txInvoiceDue").value;
-    let invoicePaid = document.getElementById("txInvoicePaid").checked;
-    if(!amount || !date || !category) { alert("Please fill amount, date and category"); return; }
+
+    if(!amount || !date || !category) return alert("Fill required fields");
+
     if(id) {
-      let idx = transactions.findIndex(t=>t.id==id);
-      if(idx!==-1) transactions[idx] = {...transactions[idx], type, amount, category, date, description:desc, invoiceNumber:invoiceNum, invoiceDueDate:invoiceDue, invoicePaid};
+      let idx = transactions.findIndex(t => t.id == id);
+      if(idx > -1) transactions[idx] = { ...transactions[idx], type, amount, category, date, description:desc };
     } else {
-      let newTx = { id: Date.now(), type, amount, category, date, description:desc, invoiceNumber:invoiceNum, invoiceDueDate:invoiceDue, invoicePaid };
-      transactions.push(newTx);
+      transactions.push({ id: Date.now(), type, amount, category, date, description:desc });
     }
     saveTransactions();
-    document.getElementById("transactionModal").classList.add("hidden");
+    closeModals();
     refreshAll();
   }
 
-  // ================= GOALS LOGIC =================
-  function renderGoals() {
-    const container = document.getElementById("goalsListContainer");
-    if(goals.length === 0) {
-      container.innerHTML = '<div class="col-span-full p-6 text-center border-2 border-dashed rounded-xl text-gray-400">No goals currently set. Click "Create Goal" to get started!</div>';
-      return;
+  window.editTransaction = (id) => {
+    let tx = transactions.find(t => t.id == id);
+    if(tx) {
+      document.getElementById("editTxId").value = tx.id;
+      document.getElementById("txType").value = tx.type;
+      document.getElementById("txAmount").value = tx.amount;
+      document.getElementById("txCategory").value = tx.category;
+      document.getElementById("txDate").value = tx.date;
+      document.getElementById("txDesc").value = tx.description || '';
+      document.getElementById("transactionModal").classList.add('active');
     }
-    
+  };
+  
+  window.deleteTransaction = (id) => {
+    if(confirm("Delete this transaction?")) {
+      transactions = transactions.filter(t => t.id != id);
+      saveTransactions(); refreshAll();
+    }
+  };
+
+  // ================= GOALS =================
+  function saveGoal() {
+    let name = document.getElementById("goalNameInput").value;
+    let target = parseFloat(document.getElementById("goalTargetInput").value);
+    if(!name || !target) return alert("Fill required fields");
+    goals.push({ id: Date.now(), name, targetAmount: target, savedAmount: 0 });
+    saveGoals(); closeModals(); refreshAll();
+  }
+
+  function renderGoals() {
+    let container = document.getElementById("goalsListContainer");
+    if(goals.length === 0) { container.innerHTML = "<p style='color:#999'>No goals yet.</p>"; return; }
     container.innerHTML = goals.map(g => {
-      let percent = Math.min((g.savedAmount / g.targetAmount) * 100, 100);
-      let isComplete = percent >= 100;
+      let pct = Math.min((g.savedAmount / g.targetAmount) * 100, 100);
       return `
-        <div class="border rounded-2xl p-5 shadow-sm relative bg-gray-50 hover:bg-white transition">
-          <button onclick="deleteGoal('${g.id}')" class="absolute top-4 right-4 text-red-400 hover:text-red-600"><i class="fas fa-trash"></i></button>
-          <h4 class="font-bold text-lg text-gray-800">${g.name}</h4>
-          <p class="text-sm text-gray-500 mb-3">Saved: ₦${g.savedAmount.toFixed(2)} / Target: ₦${g.targetAmount.toFixed(2)}</p>
-          <div class="w-full bg-gray-200 rounded-full h-3 mb-3 overflow-hidden">
-            <div class="${isComplete ? 'bg-green-500' : 'bg-indigo-600'} h-3 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
-          </div>
-          <div class="flex justify-between items-center mt-4">
-            <span class="text-sm font-semibold ${isComplete ? 'text-green-600' : 'text-indigo-600'}">${percent.toFixed(1)}% ${isComplete ? 'Reached!' : ''}</span>
-            <button onclick="openFundModal('${g.id}')" class="bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-lg text-sm hover:bg-indigo-200 transition font-medium"><i class="fas fa-plus"></i> Add Funds</button>
-          </div>
+      <div class="card" style="border: 1px solid var(--border)">
+        <div class="flex-between"><h4>${g.name}</h4> <button style="background:none;color:var(--danger)" onclick="deleteGoal(${g.id})">🗑️</button></div>
+        <p style="font-size:12px; color:var(--text-muted)">Saved: ₦${g.savedAmount} / Target: ₦${g.targetAmount}</p>
+        <div style="background:#e5e7eb; height:8px; border-radius:4px; margin:10px 0;"><div style="background:var(--primary); height:100%; width:${pct}%; border-radius:4px;"></div></div>
+        <div class="flex-between">
+          <span style="font-size:12px; font-weight:bold">${pct.toFixed(1)}%</span>
+          <button class="btn-outline" style="padding:4px 8px; font-size:12px;" onclick="openFundModal(${g.id}, '${g.name}')">+ Add Funds</button>
         </div>
-      `;
+      </div>`;
     }).join('');
   }
 
-  window.deleteGoal = (id) => {
-    if(confirm("Are you sure you want to delete this goal? (This will NOT delete the expense transactions already tracked for it).")) {
-      goals = goals.filter(g => g.id != id);
-      saveGoals();
-      refreshAll();
-    }
-  }
+  window.deleteGoal = (id) => { if(confirm("Delete Goal?")) { goals = goals.filter(g=>g.id!=id); saveGoals(); refreshAll(); } };
+  window.openFundModal = (id, name) => {
+    document.getElementById("fundGoalId").value = id;
+    document.getElementById("fundGoalDesc").innerText = "Fund: " + name;
+    document.getElementById("fundGoalDate").value = new Date().toISOString().slice(0,10);
+    document.getElementById("fundModal").classList.add("active");
+  };
 
-  window.openFundModal = (id) => {
-    let goal = goals.find(g => g.id == id);
-    if(goal) {
-      document.getElementById("fundGoalId").value = goal.id;
-      document.getElementById("fundGoalDesc").innerText = `Funding Goal: ${goal.name}`;
-      document.getElementById("fundGoalAmount").value = "";
-      document.getElementById("fundGoalDate").value = new Date().toISOString().slice(0, 10);
-      document.getElementById("fundGoalModal").classList.remove("hidden");
-    }
-  }
-
-  document.getElementById("saveGoalBtn").onclick = () => {
-    let name = document.getElementById("goalNameInput").value;
-    let target = parseFloat(document.getElementById("goalTargetInput").value);
-    if(!name || !target) { alert("Please provide a name and target amount."); return; }
-    
-    goals.push({ id: Date.now(), name: name, targetAmount: target, savedAmount: 0 });
-    saveGoals();
-    document.getElementById("createGoalModal").classList.add("hidden");
-    refreshAll();
-  }
-
-  document.getElementById("saveFundBtn").onclick = () => {
+  function saveFund() {
     let id = document.getElementById("fundGoalId").value;
     let amount = parseFloat(document.getElementById("fundGoalAmount").value);
     let date = document.getElementById("fundGoalDate").value;
+    if(!amount) return alert("Enter amount");
 
-    if(!amount || !date) { alert("Please provide an amount and date."); return; }
-
-    let goalIndex = goals.findIndex(g => g.id == id);
-    if(goalIndex !== -1) {
-      // 1. Update the goal progress
-      goals[goalIndex].savedAmount += amount;
-      saveGoals();
-
-      // 2. Automatically deduct from total by creating an EXPENSE transaction under "Savings"
-      let newExpenseTx = { 
-        id: Date.now() + 1, 
-        type: "expense", 
-        amount: amount, 
-        category: "Savings", 
-        date: date, 
-        description: `Funded Goal: ${goals[goalIndex].name}`, 
-        invoiceNumber: "", 
-        invoiceDueDate: "", 
-        invoicePaid: false 
-      };
-      transactions.push(newExpenseTx);
-      saveTransactions();
-
-      document.getElementById("fundGoalModal").classList.add("hidden");
-      refreshAll();
+    let idx = goals.findIndex(g=>g.id==id);
+    if(idx > -1) {
+      goals[idx].savedAmount += amount; saveGoals();
+      transactions.push({ id: Date.now(), type: "expense", amount, category: "Savings", date, description: `Funded Goal: ${goals[idx].name}` });
+      saveTransactions(); closeModals(); refreshAll();
     }
   }
-  // ===============================================
-  
+
+  // ================= BUDGETS =================
   function renderBudgetsUI() {
-    let month = document.getElementById("budgetMonth").value || getCurrentMonth();
-    document.getElementById("budgetMonth").value = month;
+    let month = document.getElementById("budgetMonth").value;
     let container = document.getElementById("budgetListContainer");
     container.innerHTML = "";
     expenseCategories.forEach(cat => {
-      let budgetEntry = monthlyBudgets.find(b=>b.category===cat && b.month===month);
-      let amount = budgetEntry ? budgetEntry.amount : 0;
-      let div = document.createElement("div");
-      div.className = "flex items-center gap-3 justify-between border-b pb-2";
-      div.innerHTML = `<span class="w-1/3 font-medium">${cat}</span><input type="number" data-cat="${cat}" class="budget-input w-32 border rounded p-1" value="${amount}" step="100" placeholder="₦"><span class="text-gray-500 text-sm">₦</span>`;
-      container.appendChild(div);
+      let b = monthlyBudgets.find(x => x.category === cat && x.month === month);
+      let val = b ? b.amount : 0;
+      container.innerHTML += `
+        <div class="flex-between" style="padding: 5px 0; border-bottom: 1px solid var(--border)">
+          <span>${cat}</span>
+          <div>₦ <input type="number" data-cat="${cat}" class="form-control budget-input" style="width:100px; display:inline;" value="${val}"></div>
+        </div>`;
     });
-    updateBudgetVsActual();
-  }
-  
-  function updateBudgetVsActual() {
-    let month = document.getElementById("budgetMonth").value || getCurrentMonth();
-    let expensesMonth = transactions.filter(t=>t.type==="expense" && t.date.startsWith(month));
-    let summary = expenseCategories.map(cat => {
-      let spent = expensesMonth.filter(t=>t.category===cat).reduce((s,t)=>s+t.amount,0);
-      let budget = monthlyBudgets.find(b=>b.category===cat && b.month===month)?.amount || 0;
-      let diff = budget - spent;
-      return `<div class="flex justify-between text-sm"><span>${cat}:</span><span>₦${spent.toFixed(2)} / ₦${budget} <span class="${diff>=0?'text-green-600':'text-red-600'}">(${diff>=0?'left':'over'} ₦${Math.abs(diff).toFixed(2)})</span></span></div>`;
+    
+    // Update actuals
+    let exps = transactions.filter(t=>t.type==="expense" && t.date.startsWith(month));
+    let vsHtml = expenseCategories.map(cat => {
+      let spent = exps.filter(t=>t.category===cat).reduce((s,t)=>s+t.amount,0);
+      let bdg = monthlyBudgets.find(x=>x.category===cat && x.month===month)?.amount || 0;
+      let diff = bdg - spent;
+      let color = diff >= 0 ? "var(--success)" : "var(--danger)";
+      return `<div class="flex-between" style="font-size:14px; margin-bottom:5px;">
+        <span>${cat}</span>
+        <span>Spent: ₦${spent} / Budget: ₦${bdg} <span style="color:${color}; font-weight:bold;">(${diff>=0?'left':'over'} ₦${Math.abs(diff)})</span></span>
+      </div>`;
     }).join('');
-    document.getElementById("budgetVsActual").innerHTML = summary || "<p class='text-gray-400'>No expenses this month. Set budgets above.</p>";
+    document.getElementById("budgetVsActual").innerHTML = vsHtml;
   }
-  
+
   function saveBudgetsHandler() {
     let month = document.getElementById("budgetMonth").value;
-    let inputs = document.querySelectorAll(".budget-input");
-    inputs.forEach(inp => {
+    document.querySelectorAll(".budget-input").forEach(inp => {
       let cat = inp.getAttribute("data-cat");
       let val = parseFloat(inp.value) || 0;
       let existing = monthlyBudgets.find(b=>b.category===cat && b.month===month);
-      if(existing) existing.amount = val;
-      else monthlyBudgets.push({ category: cat, amount: val, month: month });
+      if(existing) existing.amount = val; else monthlyBudgets.push({ category: cat, amount: val, month });
     });
-    saveBudgets();
-    alert("Budgets saved successfully (₦)");
-    updateBudgetVsActual();
+    saveBudgets(); renderBudgetsUI(); alert("Budgets saved!");
   }
-  
-  function renderInvoices() {
-    let invoices = transactions.filter(t=>t.type==="expense" && t.invoiceNumber && t.invoiceNumber.trim()!=="");
-    if(invoices.length === 0) {
-      document.getElementById("invoiceListBody").innerHTML = '<tr><td colspan="6" class="text-center p-4 text-gray-400">No invoices linked. Add an expense with invoice number.</td></tr>';
-      return;
-    }
-    let html = invoices.map(inv=>`<tr><td class="p-2">${inv.invoiceNumber}</td><td>${inv.invoiceDueDate||'-'}</td><td>${inv.category}</td><td>₦${inv.amount.toFixed(2)}</td><td><span class="px-2 py-0.5 rounded ${inv.invoicePaid?'bg-green-100 text-green-700':'bg-yellow-100 text-yellow-700'}">${inv.invoicePaid?'Paid':'Unpaid'}</span></td><td><button onclick="toggleInvoiceStatus('${inv.id}')" class="text-indigo-600 text-sm"><i class="fas fa-check-circle"></i> Toggle</button></td></tr>`).join('');
-    document.getElementById("invoiceListBody").innerHTML = html;
-  }
-  window.toggleInvoiceStatus = (id) => {
-    let tx = transactions.find(t=>t.id==id);
-    if(tx) { tx.invoicePaid = !tx.invoicePaid; saveTransactions(); renderInvoices(); refreshAll(); }
+
+  // ================= BACKUP & RESTORE =================
+  window.exportBackupData = () => {
+    let data = { transactions, monthlyBudgets, goals };
+    let blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+    let a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `BudgetBackup_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
   };
-  
-  // PDF Report with ₦ and Savings included
-  async function generatePDFReport() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+
+  document.getElementById("restoreDataInput").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        let data = JSON.parse(ev.target.result);
+        if(data.transactions) {
+          transactions = data.transactions; monthlyBudgets = data.monthlyBudgets || []; goals = data.goals || [];
+          saveTransactions(); saveBudgets(); saveGoals(); refreshAll(); alert("Data Restored Successfully!");
+        }
+      } catch(err) { alert("Invalid File Format"); }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  // ================= NATIVE PDF / PRINT =================
+  window.generateNativeReport = () => {
     let period = document.getElementById("reportPeriod").value;
     let now = new Date();
-    let startDate, endDate = new Date().toISOString().slice(0,10);
+    let startDate, endDate = now.toISOString().slice(0,10);
+    
     if(period==="weekly") { let d = new Date(); d.setDate(d.getDate()-7); startDate = d.toISOString().slice(0,10); }
-    else if(period==="monthly") startDate = new Date(now.getFullYear(), now.getMonth(),1).toISOString().slice(0,10);
-    else { startDate = new Date(now.getFullYear(),0,1).toISOString().slice(0,10); endDate = new Date(now.getFullYear(),11,31).toISOString().slice(0,10); }
+    else if(period==="monthly") startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0,10);
+    else startDate = new Date(now.getFullYear(), 0, 1).toISOString().slice(0,10);
+
     let filtered = transactions.filter(t=>t.date>=startDate && t.date<=endDate);
-    let incomeTotal = filtered.filter(t=>t.type==="income").reduce((s,t)=>s+t.amount,0);
-    let expenseTotal = filtered.filter(t=>t.type==="expense").reduce((s,t)=>s+t.amount,0);
-    let savingsTotal = filtered.filter(t=>t.type==="expense" && t.category==="Savings").reduce((s,t)=>s+t.amount,0);
-    let balance = incomeTotal - expenseTotal;
-    doc.setFontSize(18); doc.text("Personal Budget Report (₦ Naira)", 14, 20);
-    doc.setFontSize(11); doc.text(`Period: ${startDate} to ${endDate} (${period})`, 14, 30);
-    doc.text(`Total Income: ₦${incomeTotal.toFixed(2)}`, 14, 40);
-    doc.text(`Total Expenses: ₦${expenseTotal.toFixed(2)} (including Savings: ₦${savingsTotal.toFixed(2)})`, 14, 48);
-    doc.text(`Net Cash Flow: ₦${balance.toFixed(2)}`, 14, 56);
-    let categoryMap = new Map();
-    filtered.filter(t=>t.type==="expense").forEach(t=>categoryMap.set(t.category, (categoryMap.get(t.category)||0)+t.amount));
-    let catData = Array.from(categoryMap.entries()).map(([c,a])=>[c, `₦${a.toFixed(2)}`]);
-    doc.autoTable({ startY:65, head:[["Expense Category","Amount (₦)"]], body:catData, theme:"striped" });
-    let txTable = filtered.slice(0,30).map(t=>[t.date, t.type, t.category, `₦${t.amount.toFixed(2)}`, t.description||'']);
-    doc.autoTable({ startY: doc.lastAutoTable.finalY+10, head:[["Date","Type","Category","Amount","Desc"]], body:txTable, theme:"grid" });
-    doc.save(`financial_report_${period}_${startDate}.pdf`);
-  }
-  
-  function populateCategorySelect() {
-    let sel = document.getElementById("txCategory");
-    sel.innerHTML = '<option value="" disabled selected>-- select category --</option>';
-    [...incomeCategories, ...expenseCategories].forEach(c=>{ let opt = document.createElement("option"); opt.value=c; opt.innerText=c; sel.appendChild(opt); });
-  }
-  
-  // ================= NEW: BACKUP AND RESTORE LOGIC =================
-  
-  // Export Data (Backup)
-  function exportData() {
-    const allData = {
-      transactions: transactions,
-      budgets: monthlyBudgets,
-      goals: goals
-    };
+    let inc = filtered.filter(t=>t.type==="income").reduce((s,t)=>s+t.amount,0);
+    let exp = filtered.filter(t=>t.type==="expense").reduce((s,t)=>s+t.amount,0);
     
-    // Convert object to JSON string and encode it
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allData));
+    let html = `
+      <h1 style="color:var(--primary)">Financial Report (₦)</h1>
+      <p>Period: ${startDate} to ${endDate}</p>
+      <hr style="margin:20px 0">
+      <h3>Summary</h3>
+      <p>Total Income: <strong>₦${inc.toFixed(2)}</strong></p>
+      <p>Total Expenses: <strong>₦${exp.toFixed(2)}</strong></p>
+      <p>Net Balance: <strong>₦${(inc-exp).toFixed(2)}</strong></p>
+      <hr style="margin:20px 0">
+      <h3>Transactions List</h3>
+      <table border="1" cellpadding="5" cellspacing="0" style="width:100%; text-align:left; border-collapse:collapse;">
+        <thead style="background:#f0f0f0"><tr><th>Date</th><th>Type</th><th>Category</th><th>Amount (₦)</th><th>Desc</th></tr></thead>
+        <tbody>
+          ${filtered.map(t=>`<tr><td>${t.date}</td><td>${t.type}</td><td>${t.category}</td><td>₦${t.amount.toFixed(2)}</td><td>${t.description||''}</td></tr>`).join('')}
+        </tbody>
+      </table>
+    `;
     
-    // Create an invisible download link and trigger it
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "budget_backup_life.json");
-    document.body.appendChild(downloadAnchorNode); 
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-  }
+    let printArea = document.getElementById("printReportArea");
+    printArea.innerHTML = html;
+    printArea.style.display = "block"; // Required for Safari print calculation
+    window.print();
+    printArea.style.display = "none";
+  };
 
-  // Import Data (Restore)
-  function importData(event) {
-    const fileReader = new FileReader();
-    fileReader.onload = (e) => {
-      try {
-        const importedData = JSON.parse(e.target.result);
-        
-        // Restore each piece of data if it exists in the file
-        if (importedData.transactions) {
-          transactions = importedData.transactions;
-          saveTransactions();
-        }
-        if (importedData.budgets) {
-          monthlyBudgets = importedData.budgets;
-          saveBudgets();
-        }
-        if (importedData.goals) {
-          goals = importedData.goals;
-          saveGoals();
-        }
-        
-        alert("Data restored successfully!");
-        refreshAll(); // Update the UI with the new data
-      } catch (error) {
-        alert("Error importing data. Please ensure it is a valid backup JSON file.");
-      }
-    };
-    
-    // Read the selected file
-    if (event.target.files[0]) {
-      fileReader.readAsText(event.target.files[0]);
-    }
-  }
+  // ================= BOOTSTRAP APP =================
+  initCategories();
+  refreshAll();
 
-  // =================================================================
-
-  // Event Listeners
-  document.addEventListener("DOMContentLoaded", ()=>{
-    loadData();
-    populateCategorySelect();
-    refreshAll();
-    
-    // Connect Backup and Restore buttons
-    document.getElementById("exportDataBtn").onclick = exportData;
-    document.getElementById("importDataInput").addEventListener("change", importData);
-
-    // Tab switching logic
-    document.querySelectorAll(".tab-btn").forEach(btn=>{ 
-      btn.addEventListener("click",()=>{ 
-        let tabId=btn.getAttribute("data-tab"); 
-        document.querySelectorAll(".tab-content").forEach(t=>t.classList.add("hidden")); 
-        document.getElementById(tabId).classList.remove("hidden"); 
-        document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active-tab","border-b-2","border-indigo-600","text-indigo-700")); 
-        btn.classList.add("active-tab","border-b-2","border-indigo-600","text-indigo-700"); 
-      }); 
-    });
-    
-    // Original Modals
-    document.getElementById("addTransactionBtn").onclick = ()=>{ document.getElementById("editTxId").value=""; document.getElementById("modalTitle").innerText="Add Transaction"; document.getElementById("transactionModal").classList.remove("hidden"); };
-    document.getElementById("addTransactionQuickBtn").onclick = ()=>{ document.getElementById("editTxId").value=""; document.getElementById("modalTitle").innerText="Add Transaction"; document.getElementById("transactionModal").classList.remove("hidden"); };
-    document.getElementById("closeModalBtn").onclick = ()=>document.getElementById("transactionModal").classList.add("hidden");
-    
-    // Goals Modals
-    document.getElementById("addNewGoalBtn").onclick = () => {
-      document.getElementById("goalNameInput").value = "";
-      document.getElementById("goalTargetInput").value = "";
-      document.getElementById("createGoalModal").classList.remove("hidden");
-    };
-    document.getElementById("closeGoalModalBtn").onclick = () => document.getElementById("createGoalModal").classList.add("hidden");
-    document.getElementById("closeFundModalBtn").onclick = () => document.getElementById("fundGoalModal").classList.add("hidden");
-
-    // Saves
-    document.getElementById("saveTxBtn").onclick = saveTransactionFromModal;
-    document.getElementById("saveBudgetsBtn").onclick = saveBudgetsHandler;
-    document.getElementById("budgetMonth").addEventListener("change", ()=>{ renderBudgetsUI(); updateBudgetVsActual(); });
-    document.getElementById("generateReportBtn").onclick = generatePDFReport;
-    document.getElementById("refreshDashboardBtn").onclick = ()=>{ refreshAll(); };
-    document.getElementById("exportPDFBtn").onclick = generatePDFReport;
-  });
 </script>
 </body>
 </html>
